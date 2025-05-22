@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParkingRateImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Parking Lot Management System</a> &gt; <a href="index.source.html" class="el_package">com.parkinglot.impl</a> &gt; <span class="el_source">ParkingRateImpl.java</span></div><h1>ParkingRateImpl.java</h1><pre class="source lang-java linenums">package com.parkinglot.impl;
+
+import java.util.EnumMap;
+
+import com.parkinglot.model.User;
+import com.parkinglot.enums.VehicleType.UserType;
+import com.parkinglot.enums.VehicleType.VehicleType;
+import com.parkinglot.interfaces.ParkingRate;
+
+public class ParkingRateImpl implements ParkingRate{
+
+<span class="fc" id="L12">    private EnumMap&lt;VehicleType, Long&gt; rates = new EnumMap&lt;&gt;(VehicleType.class);</span>
+
+
+<span class="fc" id="L15">    public ParkingRateImpl(long bikeRate, long carRate, long truckRate) {</span>
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        for (VehicleType type : VehicleType.values()) {</span>
+<span class="fc" id="L17">            rates.put(type, 0L);</span>
+        }
+
+<span class="fc" id="L20">    }</span>
+
+    public Long getRate(VehicleType vehicleType) {
+<span class="fc" id="L23">        return rates.getOrDefault(vehicleType, 0L);</span>
+    }
+
+    public void setRate(VehicleType vehicleType, long rate, User user) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (user.getUserType() == UserType.ADMIN) {</span>
+<span class="fc" id="L28">            rates.put(vehicleType, rate);</span>
+        } else {
+<span class="fc" id="L30">            System.out.println(&quot;You are not authorized to set rates.&quot;);</span>
+        }
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public Long getRate(VehicleType vehicleType, int duration) {
+<span class="fc" id="L36">        Long rate = rates.get(vehicleType);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (rate != null) {</span>
+<span class="fc" id="L38">            return rate * duration; // Assuming rate is per hour, multiply by duration</span>
+        } else {
+<span class="nc" id="L40">            System.out.println(&quot;Rate not set for vehicle type: &quot; + vehicleType);</span>
+<span class="nc" id="L41">            return 0L;</span>
+        }
+    }
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TicketController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Parking Lot Management System</a> &gt; <a href="index.source.html" class="el_package">com.parkinglot.controller</a> &gt; <span class="el_source">TicketController.java</span></div><h1>TicketController.java</h1><pre class="source lang-java linenums">package com.parkinglot.controller;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.parkinglot.enums.VehicleType.VehicleType;
+import com.parkinglot.model.Ticket;
+
+@RestController
+@RequestMapping(&quot;/api/tickets&quot;)
+<span class="fc" id="L20">public class TicketController {</span>
+<span class="fc" id="L21">    private final List&lt;Ticket&gt; tickets = new ArrayList&lt;&gt;();</span>
+
+    @PostMapping(&quot;/entry&quot;)
+    public ResponseEntity&lt;Ticket&gt; createEntryTicket(@RequestBody Map&lt;String, Object&gt; payload) {
+        // expects entryTime (yyyy-MM-dd), vehicleType
+<span class="fc" id="L26">        Date entryTime = Date.valueOf((String) payload.get(&quot;entryTime&quot;));</span>
+<span class="fc" id="L27">        VehicleType vehicleType = VehicleType.valueOf((String) payload.get(&quot;vehicleType&quot;));</span>
+<span class="fc" id="L28">        Ticket ticket = new Ticket(entryTime, null, vehicleType);</span>
+<span class="fc" id="L29">        tickets.add(ticket);</span>
+<span class="fc" id="L30">        return ResponseEntity.ok(ticket);</span>
+    }
+
+    @PostMapping(&quot;/exit&quot;)
+    public ResponseEntity&lt;Ticket&gt; markExit(@RequestBody Map&lt;String, Object&gt; payload) {
+        // expects entryTime (yyyy-MM-dd), exitTime (yyyy-MM-dd), vehicleType
+<span class="fc" id="L36">        Date entryTime = Date.valueOf((String) payload.get(&quot;entryTime&quot;));</span>
+<span class="fc" id="L37">        Date exitTime = Date.valueOf((String) payload.get(&quot;exitTime&quot;));</span>
+<span class="fc" id="L38">        VehicleType vehicleType = VehicleType.valueOf((String) payload.get(&quot;vehicleType&quot;));</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (Ticket t : tickets) {</span>
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">            if (t.getEntryTime().equals(entryTime) &amp;&amp; t.getVehicleType() == vehicleType) {</span>
+                // Set exitTime on the ticket
+                try {
+<span class="fc" id="L43">                    java.lang.reflect.Field exitField = Ticket.class.getDeclaredField(&quot;exitTime&quot;);</span>
+<span class="fc" id="L44">                    exitField.setAccessible(true);</span>
+<span class="fc" id="L45">                    exitField.set(t, exitTime);</span>
+<span class="nc" id="L46">                } catch (Exception e) {</span>
+                    // ignore
+<span class="fc" id="L48">                }</span>
+<span class="fc" id="L49">                return ResponseEntity.ok(t);</span>
+            }
+<span class="fc" id="L51">        }</span>
+<span class="fc" id="L52">        return ResponseEntity.notFound().build();</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Ticket&gt;&gt; getAllTickets() {
+<span class="fc" id="L57">        return ResponseEntity.ok(tickets);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
